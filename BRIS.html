@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay San Miguel, Pasig City - Management System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fa;
+            color: #333333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-bottom: 4px solid #002244;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        header p {
+            font-size: 12px;
+            color: #d0e0f0;
+        }
+
+        nav {
+            background-color: #002244;
+            display: flex;
+            padding: 0 20px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav button:hover, nav button.active {
+            background-color: #003366;
+            border-bottom: 3px solid #ffffff;
+        }
+
+        .container {
+            padding: 20px;
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-left: 5px solid #003366;
+            padding: 15px;
+            border-radius: 2px;
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            color: #666666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .panel {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 2px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+            color: #003366;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            background-color: #003366;
+            color: #ffffff;
+            border: 1px solid #002244;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+
+        .btn:hover {
+            background-color: #002244;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #003366;
+            border: 1px solid #003366;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e6f0fa;
+        }
+
+        .btn-danger {
+            background-color: #cc0000;
+            border-color: #990000;
+        }
+
+        .btn-danger:hover {
+            background-color: #990000;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], select {
+            padding: 7px 10px;
+            border: 1px solid #cccccc;
+            font-size: 13px;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #003366;
+        }
+
+        .filter-bar input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        table th, table td {
+            border: 1px solid #dddddd;
+            padding: 8px 10px;
+        }
+
+        table th {
+            background-color: #003366;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #e6f0fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 2px;
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+        }
+
+        .badge-active { background-color: #e6ffe6; color: #006600; border-color: #006600; }
+        .badge-inactive { background-color: #ffe6e6; color: #cc0000; border-color: #cc0000; }
+        .badge-pending { background-color: #fffacd; color: #8b8000; border-color: #8b8000; }
+        .badge-approved { background-color: #e6f2ff; color: #003366; border-color: #003366; }
+        .badge-released { background-color: #e6ffe6; color: #006600; border-color: #006600; }
+        .badge-rejected { background-color: #ffe6e6; color: #cc0000; border-color: #cc0000; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            border: 2px solid #003366;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 2px;
+        }
+
+        .modal-header {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 15px;
+            text-transform: uppercase;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            color: #333333;
+        }
+
+        .modal-footer {
+            padding: 12px 15px;
+            background-color: #f4f7fa;
+            border-top: 1px solid #cccccc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        #document-preview {
+            border: 2px solid #003366;
+            padding: 30px;
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .doc-header {
+            text-align: center;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .doc-header h2 {
+            font-size: 16px;
+            color: #003366;
+            text-transform: uppercase;
+        }
+
+        .doc-header h1 {
+            font-size: 20px;
+            color: #003366;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .doc-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin: 25px 0;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 40px;
+        }
+
+        .doc-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            font-size: 12px;
+        }
+
+        .doc-sign {
+            text-align: center;
+            border-top: 1px solid #000000;
+            padding-top: 5px;
+            width: 200px;
+        }
+
+        footer {
+            background-color: #002244;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            margin-top: auto;
+            border-top: 2px solid #003366;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-area, #printable-area * {
+                visibility: visible;
+            }
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="no-print">
+        <div>
+            <h1>Barangay San Miguel</h1>
+            <p>City of Pasig, Metro Manila</p>
+        </div>
+        <div>
+            <button class="btn btn-danger" onclick="resetDatabase()">Reset Database</button>
+        </div>
+    </header>
+
+    <nav class="no-print">
+        <button id="nav-dashboard" class="active" onclick="showTab('dashboard')">Dashboard</button>
+        <button id="nav-residents" onclick="showTab('residents')">Resident Profiles</button>
+        <button id="nav-clearances" onclick="showTab('clearances')">Clearance Requests</button>
+    </nav>
+
+    <div class="container no-print">
+
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Residents</h3>
+                    <p id="stat-residents">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Households</h3>
+                    <p id="stat-households">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Requests</h3>
+                    <p id="stat-pending">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Issued Documents</h3>
+                    <p id="stat-issued">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Collections</h3>
+                    <p id="stat-revenue">₱0.00</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Recent Resident Registrations</h2>
+                    <button class="btn btn-secondary" onclick="showTab('residents')">View All</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Household No.</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-residents-list">
+                        <tr><td colspan="3" style="text-align: center;">No resident records registered.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Recent Clearance Requests</h2>
+                    <button class="btn btn-secondary" onclick="showTab('clearances')">View All</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resident Name</th>
+                            <th>Document Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-clearances-list">
+                        <tr><td colspan="3" style="text-align: center;">No clearance requests recorded.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-residents" class="tab-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Resident Information Directory</h2>
+                    <button class="btn" onclick="openResidentModal()">Add New Resident</button>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" id="search-resident" placeholder="Search by name, address, or household no..." oninput="renderResidents()">
+                    <select id="filter-status" onchange="renderResidents()">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                    <select id="filter-class" onchange="renderResidents()">
+                        <option value="">All Classifications</option>
+                        <option value="Senior">Senior Citizen</option>
+                        <option value="PWD">PWD</option>
+                        <option value="Indigent">Indigent</option>
+                        <option value="SoloParent">Solo Parent</option>
+                        <option value="Voter">Registered Voter</option>
+                    </select>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Birthdate / Age</th>
+                            <th>Address</th>
+                            <th>Household No.</th>
+                            <th>Status / Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="residents-table-body">
+                        <tr><td colspan="6" style="text-align: center;">No records found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-clearances" class="tab-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Clearance & Certificate Requests</h2>
+                    <button class="btn" onclick="openClearanceModal()">New Request</button>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" id="search-clearance" placeholder="Search by resident name or OR number..." oninput="renderClearances()">
+                    <select id="filter-clr-status" onchange="renderClearances()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Released">Released</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resident</th>
+                            <th>Document Type</th>
+                            <th>Purpose</th>
+                            <th>Date</th>
+                            <th>Fee / OR No.</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clearances-table-body">
+                        <tr><td colspan="7" style="text-align: center;">No records found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modal-resident" class="modal no-print">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="res-modal-title">Add Resident Profile</h3>
+                <button onclick="closeModal('modal-resident')">&times;</button>
+            </div>
+            <form id="form-resident" onsubmit="saveResident(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="res-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" id="res-fname" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Middle Name</label>
+                            <input type="text" id="res-mname">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name *</label>
+                            <input type="text" id="res-lname" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Birth Date *</label>
+                            <input type="date" id="res-dob" required onchange="calculateAge()">
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="res-age" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Civil Status</label>
+                            <select id="res-civil">
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Widowed">Widowed</option>
+                                <option value="Separated">Separated</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Household ID *</label>
+                            <input type="text" id="res-household" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Street Address *</label>
+                            <input type="text" id="res-address" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Occupation</label>
+                            <input type="text" id="res-occupation">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="res-status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group full">
+                            <label>Special Classifications</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="chk-senior"> Senior Citizen</label>
+                                <label><input type="checkbox" id="chk-pwd"> PWD</label>
+                                <label><input type="checkbox" id="chk-indigent"> Indigent</label>
+                                <label><input type="checkbox" id="chk-soloparent"> Solo Parent</label>
+                                <label><input type="checkbox" id="chk-voter"> Registered Voter</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-resident')">Cancel</button>
+                    <button type="submit" class="btn">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-clearance" class="modal no-print">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="clr-modal-title">New Document Request</h3>
+                <button onclick="closeModal('modal-clearance')">&times;</button>
+            </div>
+            <form id="form-clearance" onsubmit="saveClearance(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="clr-id">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Resident *</label>
+                            <select id="clr-resident" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Document Type *</label>
+                            <select id="clr-type" required onchange="updateDefaultFee()">
+                                <option value="Barangay Clearance">Barangay Clearance</option>
+                                <option value="Certificate of Indigency">Certificate of Indigency</option>
+                                <option value="Certificate of Residency">Certificate of Residency</option>
+                                <option value="Business Permit Clearance">Business Permit Clearance</option>
+                                <option value="First Time Job Seeker">First Time Job Seeker Cert</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date Requested *</label>
+                            <input type="date" id="clr-date" required>
+                        </div>
+                        <div class="form-group full">
+                            <label>Purpose *</label>
+                            <input type="text" id="clr-purpose" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fee (₱) *</label>
+                            <input type="number" step="0.01" id="clr-fee" required>
+                        </div>
+                        <div class="form-group">
+                            <label>OR Number</label>
+                            <input type="text" id="clr-or">
+                        </div>
+                        <div class="form-group full">
+                            <label>Status</label>
+                            <select id="clr-status">
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Released">Released</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-clearance')">Cancel</button>
+                    <button type="submit" class="btn">Save Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-print" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header no-print">
+                <h3>Document Print Preview</h3>
+                <div>
+                    <button class="btn" onclick="window.print()">Print</button>
+                    <button class="btn btn-secondary" onclick="closeModal('modal-print')">Close</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="printable-area">
+                    <div id="document-preview">
+                        <div class="doc-header">
+                            <h2>Republic of the Philippines</h2>
+                            <h2>City of Pasig</h2>
+                            <h1>Barangay San Miguel</h1>
+                            <p style="font-size: 11px; margin-top: 5px;">OFFICE OF THE BARANGAY CAPTAIN</p>
+                        </div>
+
+                        <div class="doc-title" id="doc-type-title">BARANGAY CLEARANCE</div>
+
+                        <div class="doc-body">
+                            <p><strong>TO WHOM IT MAY CONCERN:</strong></p><br>
+                            <p>This is to certify that <strong id="doc-res-name">____________________</strong>, of legal age, is a bona fide resident of Barangay San Miguel, Pasig City, residing at <span id="doc-res-address">____________________</span>.</p><br>
+                            <p>Based on records of this office, the person named above has no derogatory record or pending case filed in this Barangay.</p><br>
+                            <p>This certification is issued upon the request of the interested party for the purpose of: <strong id="doc-purpose">____________________</strong>.</p><br>
+                            <p>Issued this <span id="doc-date">____ day of ________, 2026</span> at Barangay San Miguel, Pasig City.</p>
+                        </div>
+
+                        <div class="doc-footer">
+                            <div>
+                                <p><strong>OR No:</strong> <span id="doc-or">________</span></p>
+                                <p><strong>Amount Paid:</strong> ₱<span id="doc-fee">0.00</span></p>
+                            </div>
+                            <div class="doc-sign">
+                                <p><strong>PUNONG BARANGAY</strong></p>
+                                <p>Barangay Captain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="no-print">
+        Barangay San Miguel Information System - Pasig City &copy; 2026
+    </footer>
+
+    <script>
+        let residents = JSON.parse(localStorage.getItem('bsm_residents')) || [];
+        let clearances = JSON.parse(localStorage.getItem('bsm_clearances')) || [];
+
+        window.onload = function() {
+            renderDashboard();
+            renderResidents();
+            renderClearances();
+        };
+
+        function saveData() {
+            localStorage.setItem('bsm_residents', JSON.stringify(residents));
+            localStorage.setItem('bsm_clearances', JSON.stringify(clearances));
+            renderDashboard();
+        }
+
+        function showTab(tabName) {
+            let tabs = document.querySelectorAll('.tab-content');
+            let navBtns = document.querySelectorAll('nav button');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            navBtns.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('nav-' + tabName).classList.add('active');
+
+            if (tabName === 'dashboard') renderDashboard();
+            if (tabName === 'residents') renderResidents();
+            if (tabName === 'clearances') renderClearances();
+        }
+
+        function renderDashboard() {
+            document.getElementById('stat-residents').innerText = residents.length;
+            
+            let households = new Set(residents.map(r => r.household).filter(Boolean));
+            document.getElementById('stat-households').innerText = households.size;
+
+            let pending = clearances.filter(c => c.status === 'Pending').length;
+            let issued = clearances.filter(c => c.status === 'Approved' || c.status === 'Released').length;
+            let totalRevenue = clearances.reduce((acc, c) => acc + (parseFloat(c.fee) || 0), 0);
+
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-issued').innerText = issued;
+            document.getElementById('stat-revenue').innerText = '₱' + totalRevenue.toFixed(2);
+
+            let recResBody = document.getElementById('recent-residents-list');
+            if (residents.length === 0) {
+                recResBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No resident records registered.</td></tr>';
+            } else {
+                recResBody.innerHTML = residents.slice(-5).reverse().map(r => `
+                    <tr>
+                        <td>${r.lastName}, ${r.firstName}</td>
+                        <td>${r.household}</td>
+                        <td><span class="badge ${r.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${r.status}</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            let recClrBody = document.getElementById('recent-clearances-list');
+            if (clearances.length === 0) {
+                recClrBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No clearance requests recorded.</td></tr>';
+            } else {
+                recClrBody.innerHTML = clearances.slice(-5).reverse().map(c => {
+                    let res = residents.find(r => r.id === c.residentId);
+                    let resName = res ? res.lastName + ', ' + res.firstName : 'Unknown';
+                    return `
+                        <tr>
+                            <td>${resName}</td>
+                            <td>${c.type}</td>
+                            <td><span class="badge badge-${c.status.toLowerCase()}">${c.status}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function renderResidents() {
+            let search = document.getElementById('search-resident').value.toLowerCase();
+            let statusFilter = document.getElementById('filter-status').value;
+            let classFilter = document.getElementById('filter-class').value;
+
+            let filtered = residents.filter(r => {
+                let fullName = (r.firstName + ' ' + r.lastName).toLowerCase();
+                let matchSearch = fullName.includes(search) || r.address.toLowerCase().includes(search) || r.household.toLowerCase().includes(search);
+                let matchStatus = !statusFilter || r.status === statusFilter;
+                let matchClass = true;
+
+                if (classFilter === 'Senior') matchClass = r.isSenior;
+                if (classFilter === 'PWD') matchClass = r.isPwd;
+                if (classFilter === 'Indigent') matchClass = r.isIndigent;
+                if (classFilter === 'SoloParent') matchClass = r.isSoloParent;
+                if (classFilter === 'Voter') matchClass = r.isVoter;
+
+                return matchSearch && matchStatus && matchClass;
+            });
+
+            let tbody = document.getElementById('residents-table-body');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No records found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr>
+                    <td><strong>${r.lastName}, ${r.firstName} ${r.middleName}</strong></td>
+                    <td>${r.dob} (${r.age} yrs)</td>
+                    <td>${r.address}</td>
+                    <td>${r.household}</td>
+                    <td>
+                        <span class="badge ${r.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${r.status}</span>
+                        ${r.isSenior ? '<span class="badge">Senior</span>' : ''}
+                        ${r.isPwd ? '<span class="badge">PWD</span>' : ''}
+                        ${r.isIndigent ? '<span class="badge">Indigent</span>' : ''}
+                        ${r.isVoter ? '<span class="badge">Voter</span>' : ''}
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editResident('${r.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteResident('${r.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function calculateAge() {
+            let dob = document.getElementById('res-dob').value;
+            if (!dob) return;
+            let birthDate = new Date(dob);
+            let age = new Date().getFullYear() - birthDate.getFullYear();
+            let m = new Date().getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && new Date().getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('res-age').value = age;
+            if (age >= 60) {
+                document.getElementById('chk-senior').checked = true;
+            }
+        }
+
+        function openResidentModal(id = null) {
+            document.getElementById('form-resident').reset();
+            document.getElementById('res-id').value = '';
+            document.getElementById('res-modal-title').innerText = 'Add Resident Profile';
+
+            if (id) {
+                let r = residents.find(res => res.id === id);
+                if (r) {
+                    document.getElementById('res-id').value = r.id;
+                    document.getElementById('res-fname').value = r.firstName;
+                    document.getElementById('res-mname').value = r.middleName;
+                    document.getElementById('res-lname').value = r.lastName;
+                    document.getElementById('res-dob').value = r.dob;
+                    document.getElementById('res-age').value = r.age;
+                    document.getElementById('res-civil').value = r.civil;
+                    document.getElementById('res-household').value = r.household;
+                    document.getElementById('res-address').value = r.address;
+                    document.getElementById('res-occupation').value = r.occupation;
+                    document.getElementById('res-status').value = r.status;
+                    document.getElementById('chk-senior').checked = r.isSenior;
+                    document.getElementById('chk-pwd').checked = r.isPwd;
+                    document.getElementById('chk-indigent').checked = r.isIndigent;
+                    document.getElementById('chk-soloparent').checked = r.isSoloParent;
+                    document.getElementById('chk-voter').checked = r.isVoter;
+                    document.getElementById('res-modal-title').innerText = 'Edit Resident Profile';
+                }
+            }
+
+            document.getElementById('modal-resident').classList.add('active');
+        }
+
+        function saveResident(e) {
+            e.preventDefault();
+            let id = document.getElementById('res-id').value || 'RES-' + Date.now();
+            let newRes = {
+                id: id,
+                firstName: document.getElementById('res-fname').value,
+                middleName: document.getElementById('res-mname').value,
+                lastName: document.getElementById('res-lname').value,
+                dob: document.getElementById('res-dob').value,
+                age: document.getElementById('res-age').value,
+                civil: document.getElementById('res-civil').value,
+                household: document.getElementById('res-household').value,
+                address: document.getElementById('res-address').value,
+                occupation: document.getElementById('res-occupation').value,
+                status: document.getElementById('res-status').value,
+                isSenior: document.getElementById('chk-senior').checked,
+                isPwd: document.getElementById('chk-pwd').checked,
+                isIndigent: document.getElementById('chk-indigent').checked,
+                isSoloParent: document.getElementById('chk-soloparent').checked,
+                isVoter: document.getElementById('chk-voter').checked
+            };
+
+            let idx = residents.findIndex(r => r.id === id);
+            if (idx >= 0) {
+                residents[idx] = newRes;
+            } else {
+                residents.push(newRes);
+            }
+
+            saveData();
+            closeModal('modal-resident');
+            renderResidents();
+        }
+
+        function editResident(id) {
+            openResidentModal(id);
+        }
+
+        function deleteResident(id) {
+            if (confirm('Are you sure you want to delete this resident record?')) {
+                residents = residents.filter(r => r.id !== id);
+                saveData();
+                renderResidents();
+            }
+        }
+
+        function renderClearances() {
+            let search = document.getElementById('search-clearance').value.toLowerCase();
+            let statusFilter = document.getElementById('filter-clr-status').value;
+
+            let filtered = clearances.filter(c => {
+                let res = residents.find(r => r.id === c.residentId);
+                let resName = res ? (res.firstName + ' ' + res.lastName).toLowerCase() : '';
+                let matchSearch = resName.includes(search) || (c.orNo && c.orNo.toLowerCase().includes(search));
+                let matchStatus = !statusFilter || c.status === statusFilter;
+                return matchSearch && matchStatus;
+            });
+
+            let tbody = document.getElementById('clearances-table-body');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No records found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(c => {
+                let res = residents.find(r => r.id === c.residentId);
+                let resName = res ? res.lastName + ', ' + res.firstName : 'Unknown';
+                return `
+                    <tr>
+                        <td><strong>${resName}</strong></td>
+                        <td>${c.type}</td>
+                        <td>${c.purpose}</td>
+                        <td>${c.date}</td>
+                        <td>₱${parseFloat(c.fee).toFixed(2)} / ${c.orNo || 'N/A'}</td>
+                        <td><span class="badge badge-${c.status.toLowerCase()}">${c.status}</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="printDoc('${c.id}')">Print</button>
+                            <button class="btn btn-secondary" onclick="openClearanceModal('${c.id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteClearance('${c.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateDefaultFee() {
+            let type = document.getElementById('clr-type').value;
+            let feeInput = document.getElementById('clr-fee');
+            if (type === 'Certificate of Indigency' || type === 'First Time Job Seeker') {
+                feeInput.value = '0.00';
+            } else if (type === 'Business Permit Clearance') {
+                feeInput.value = '200.00';
+            } else {
+                feeInput.value = '50.00';
+            }
+        }
+
+        function openClearanceModal(id = null) {
+            document.getElementById('form-clearance').reset();
+            document.getElementById('clr-id').value = '';
+            document.getElementById('clr-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('clr-modal-title').innerText = 'New Document Request';
+
+            let select = document.getElementById('clr-resident');
+            if (residents.length === 0) {
+                select.innerHTML = '<option value="">-- No Residents Registered --</option>';
+            } else {
+                select.innerHTML = '<option value="">-- Select Resident --</option>' + 
+                    residents.map(r => `<option value="${r.id}">${r.lastName}, ${r.firstName} (${r.address})</option>`).join('');
+            }
+
+            updateDefaultFee();
+
+            if (id) {
+                let c = clearances.find(item => item.id === id);
+                if (c) {
+                    document.getElementById('clr-id').value = c.id;
+                    document.getElementById('clr-resident').value = c.residentId;
+                    document.getElementById('clr-type').value = c.type;
+                    document.getElementById('clr-date').value = c.date;
+                    document.getElementById('clr-purpose').value = c.purpose;
+                    document.getElementById('clr-fee').value = c.fee;
+                    document.getElementById('clr-or').value = c.orNo;
+                    document.getElementById('clr-status').value = c.status;
+                    document.getElementById('clr-modal-title').innerText = 'Edit Request';
+                }
+            }
+
+            document.getElementById('modal-clearance').classList.add('active');
+        }
+
+        function saveClearance(e) {
+            e.preventDefault();
+            let resId = document.getElementById('clr-resident').value;
+            if (!resId) {
+                alert('Please select a resident.');
+                return;
+            }
+
+            let id = document.getElementById('clr-id').value || 'CLR-' + Date.now();
+            let newClr = {
+                id: id,
+                residentId: resId,
+                type: document.getElementById('clr-type').value,
+                date: document.getElementById('clr-date').value,
+                purpose: document.getElementById('clr-purpose').value,
+                fee: parseFloat(document.getElementById('clr-fee').value) || 0,
+                orNo: document.getElementById('clr-or').value,
+                status: document.getElementById('clr-status').value
+            };
+
+            let idx = clearances.findIndex(c => c.id === id);
+            if (idx >= 0) {
+                clearances[idx] = newClr;
+            } else {
+                clearances.push(newClr);
+            }
+
+            saveData();
+            closeModal('modal-clearance');
+            renderClearances();
+        }
+
+        function deleteClearance(id) {
+            if (confirm('Are you sure you want to delete this clearance request?')) {
+                clearances = clearances.filter(c => c.id !== id);
+                saveData();
+                renderClearances();
+            }
+        }
+
+        function printDoc(id) {
+            let c = clearances.find(item => item.id === id);
+            if (!c) return;
+            let r = residents.find(res => res.id === c.residentId);
+            if (!r) {
+                alert('Resident profile not found.');
+                return;
+            }
+
+            document.getElementById('doc-type-title').innerText = c.type;
+            document.getElementById('doc-res-name').innerText = r.firstName + ' ' + (r.middleName ? r.middleName + ' ' : '') + r.lastName;
+            document.getElementById('doc-res-address').innerText = r.address;
+            document.getElementById('doc-purpose').innerText = c.purpose;
+            document.getElementById('doc-date').innerText = c.date;
+            document.getElementById('doc-or').innerText = c.orNo || 'N/A';
+            document.getElementById('doc-fee').innerText = parseFloat(c.fee).toFixed(2);
+
+            document.getElementById('modal-print').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function resetDatabase() {
+            if (confirm('Are you sure you want to delete all system data? This cannot be undone.')) {
+                localStorage.removeItem('bsm_residents');
+                localStorage.removeItem('bsm_clearances');
+                residents = [];
+                clearances = [];
+                renderDashboard();
+                renderResidents();
+                renderClearances();
+            }
+        }
+    </script>
+</body>
+</html>
